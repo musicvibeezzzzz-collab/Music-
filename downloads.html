@@ -1,0 +1,543 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vibe - Downloads</title>
+
+<script src="theme.js"></script>
+<link rel="stylesheet" href="player.css">
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  color: white;
+  background: #080808;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  padding-bottom: 100px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* TOP BAR */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  height: 60px;
+  padding: 7px 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,255,255,.96);
+  color: #111;
+  backdrop-filter: blur(15px);
+}
+
+.topbar button {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border: 0;
+  background: transparent;
+  color: #111;
+  font-size: 29px;
+  cursor: pointer;
+}
+
+.topTitle {
+  flex: 1;
+  min-width: 0;
+  font-size: 19px;
+  font-weight: bold;
+}
+
+/* PAGE HEADING */
+
+.heading {
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 32px 18px 20px;
+}
+
+.heading h1 {
+  margin: 0;
+  font-size: clamp(30px, 7vw, 40px);
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.heading p {
+  margin: 9px 0 0;
+  color: #999;
+  font-size: 14px;
+}
+
+/* DOWNLOAD LIST */
+
+#downloads {
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 0 14px;
+}
+
+#loading, #empty {
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 40px 15px;
+  text-align: center;
+  color: #999;
+  font-size: 14px;
+}
+
+/* SONG CARD */
+
+.songCard {
+  width: 100%;
+  min-width: 0;
+  min-height: 82px;
+  margin: 0 0 11px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 16px;
+  background: #151515;
+  cursor: pointer;
+  transition: background .2s, transform .2s;
+}
+
+.songCard:active {
+  transform: scale(.985);
+  background: #202020;
+}
+
+.songCover {
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  border-radius: 11px;
+  object-fit: cover;
+  background: #292929;
+}
+
+.songInfo {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.songTitle {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.songArtist {
+  margin-top: 6px;
+  color: #999;
+  font-size: 13px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.songActions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-shrink: 0;
+}
+
+/* BUTTONS */
+
+.playBtn, .deleteBtn {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.playBtn {
+  background: white;
+  color: black;
+  font-size: 16px;
+}
+
+.deleteBtn {
+  background: #292929;
+  color: #ff6666;
+  transition: background .2s;
+}
+
+.deleteBtn:active {
+  background: #492020;
+}
+
+.deleteBtn svg {
+  width: 19px;
+  height: 19px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* LIGHT THEME */
+
+:root[data-theme="light"],
+:root[data-theme="light"] body {
+  background: #f4f4f4 !important;
+  background-image: none !important;
+  color: #111;
+}
+
+:root[data-theme="light"] .songCard {
+  background: #fff;
+  border-color: #e5e5e5;
+}
+
+:root[data-theme="light"] .songTitle {
+  color: #111;
+}
+
+:root[data-theme="light"] .songArtist {
+  color: #777;
+}
+
+:root[data-theme="light"] .deleteBtn {
+  background: #f0f0f0;
+  color: #d83232;
+}
+
+/* SMALL SCREENS */
+
+@media (max-width: 380px) {
+  #downloads {
+    padding: 0 10px;
+  }
+
+  .songCard {
+    gap: 9px;
+    padding: 8px;
+  }
+
+  .songCover {
+    width: 52px;
+    height: 52px;
+  }
+
+  .songActions {
+    gap: 6px;
+  }
+
+  .playBtn, .deleteBtn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .songTitle {
+    font-size: 14px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <button onclick="history.back()" aria-label="Go back">‹</button>
+  <div class="topTitle">Vibe Downloads</div>
+</header>
+
+<section class="heading">
+  <h1>Downloads</h1>
+  <p>Your music, available offline</p>
+</section>
+
+<div id="loading">Loading downloads...</div>
+
+<div id="empty" style="display:none">
+  No downloaded songs yet.
+</div>
+
+<div id="downloads"></div>
+
+<script>
+const DB_NAME = "VibeOfflineDB";
+const STORE_NAME = "downloads";
+
+const container = document.getElementById("downloads");
+const loading = document.getElementById("loading");
+const empty = document.getElementById("empty");
+
+let downloadedSongs = [];
+let playlist = [];
+let audioUrls = [];
+
+/* DATABASE */
+
+async function openDownloadDB() {
+  let db = await new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME);
+
+    request.onupgradeneeded = () => {
+      const database = request.result;
+
+      if (!database.objectStoreNames.contains(STORE_NAME)) {
+        database.createObjectStore(STORE_NAME, {
+          keyPath: "id"
+        });
+      }
+    };
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+
+  if (db.objectStoreNames.contains(STORE_NAME)) {
+    return db;
+  }
+
+  const newVersion = db.version + 1;
+  db.close();
+
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, newVersion);
+
+    request.onupgradeneeded = () => {
+      const database = request.result;
+
+      if (!database.objectStoreNames.contains(STORE_NAME)) {
+        database.createObjectStore(STORE_NAME, {
+          keyPath: "id"
+        });
+      }
+    };
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+/* GET DOWNLOADS */
+
+async function getDownloads() {
+  const db = await openDownloadDB();
+
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(STORE_NAME, "readonly");
+    const request = transaction.objectStore(STORE_NAME).getAll();
+
+    request.onsuccess = () => resolve(request.result || []);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+/* DELETE DOWNLOAD */
+
+async function deleteDownload(id) {
+  const db = await openDownloadDB();
+
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(STORE_NAME, "readwrite");
+
+    transaction.objectStore(STORE_NAME).delete(id);
+
+    transaction.oncomplete = resolve;
+    transaction.onerror = () => reject(transaction.error);
+  });
+}
+
+/* HTML SAFETY */
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+/* CREATE LOCAL PLAYLIST */
+
+function preparePlaylist() {
+  audioUrls.forEach(url => URL.revokeObjectURL(url));
+  audioUrls = [];
+
+  playlist = downloadedSongs.map(item => {
+    const localUrl = URL.createObjectURL(item.audioBlob);
+
+    audioUrls.push(localUrl);
+
+    return {
+      ...item.song,
+      audio_url: localUrl
+    };
+  });
+}
+
+/* PLAY DOWNLOADED SONG */
+
+function playOffline(index) {
+  const song = playlist[index];
+
+  if (!song) {
+    alert("Downloaded song not found.");
+    return;
+  }
+
+  if (typeof VibePlayer === "undefined") {
+    alert("VibePlayer was not found. Check theme.js.");
+    return;
+  }
+
+  VibePlayer.play(song, playlist);
+}
+
+/* SONG CARD */
+
+function createCard(item, index) {
+  const song = item.song;
+
+  const card = document.createElement("div");
+  card.className = "songCard";
+
+  card.innerHTML = `
+    <img class="songCover"
+         src="${escapeHTML(song.cover_url || "")}"
+         alt="">
+
+    <div class="songInfo">
+      <div class="songTitle">
+        ${escapeHTML(song.title)}
+      </div>
+
+      <div class="songArtist">
+        ${escapeHTML(song.artist)}
+      </div>
+    </div>
+
+    <div class="songActions">
+      <button class="playBtn" aria-label="Play song">▶</button>
+
+      <button class="deleteBtn" aria-label="Delete download">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 6h18"/>
+          <path d="M8 6V4h8v2"/>
+          <path d="M19 6l-1 14H6L5 6"/>
+          <path d="M10 11v5"/>
+          <path d="M14 11v5"/>
+        </svg>
+      </button>
+    </div>
+  `;
+
+  card.addEventListener("click", () => {
+    playOffline(index);
+  });
+
+  card.querySelector(".playBtn").addEventListener("click", event => {
+    event.stopPropagation();
+    playOffline(index);
+  });
+
+  card.querySelector(".deleteBtn").addEventListener("click", async event => {
+    event.stopPropagation();
+
+    if (!confirm("Delete this downloaded song?")) {
+      return;
+    }
+
+    try {
+      await deleteDownload(song.id);
+      await loadDownloads();
+    } catch (error) {
+      console.error(error);
+      alert("Could not delete this download.");
+    }
+  });
+
+  return card;
+}
+
+/* LOAD DOWNLOADS */
+
+async function loadDownloads() {
+  loading.style.display = "block";
+  empty.style.display = "none";
+  container.innerHTML = "";
+
+  try {
+    const records = await getDownloads();
+
+    downloadedSongs = records.filter(item =>
+      item &&
+      item.song &&
+      item.audioBlob instanceof Blob &&
+      item.audioBlob.size > 0
+    );
+
+    if (downloadedSongs.length === 0) {
+      playlist = [];
+      empty.style.display = "block";
+      return;
+    }
+
+    preparePlaylist();
+
+    downloadedSongs.forEach((item, index) => {
+      container.appendChild(createCard(item, index));
+    });
+
+  } catch (error) {
+    console.error("Downloads error:", error);
+    empty.textContent = "Could not load downloads.";
+    empty.style.display = "block";
+  } finally {
+    loading.style.display = "none";
+  }
+}
+
+/* CLEAN UP LOCAL URLS */
+
+window.addEventListener("pagehide", () => {
+  audioUrls.forEach(url => URL.revokeObjectURL(url));
+  audioUrls = [];
+});
+
+loadDownloads();
+</script>
+
+</body>
+</html>
